@@ -7,33 +7,80 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-900">
+<body class="min-h-screen bg-slate-950 text-slate-900">
   <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <header class="mb-6">
-      <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">Factory Demo</p>
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-slate-950">Factory Energy Monitoring Dashboard</h1>
-      <p class="mt-2 max-w-3xl text-sm text-slate-600">
-        A simple single-page view for tracking daily energy usage, recent trends, and zone-level alerts.
-      </p>
+    <header class="overflow-hidden rounded-lg border border-white/10 bg-white shadow-xl">
+      <div class="bg-slate-900 px-5 py-5 text-white sm:px-6">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-cyan-300">Factory Demo</p>
+            <h1 class="mt-1 text-3xl font-bold tracking-tight">Factory Energy Monitoring Dashboard</h1>
+            <p class="mt-2 max-w-3xl text-sm text-slate-300">
+              Monitor daily energy usage, recent trends, and zone-level alerts in one simple view.
+            </p>
+          </div>
+
+          <div class="rounded-lg border border-white/10 bg-white/10 p-4">
+            <label for="dateSelect" class="block text-xs font-semibold uppercase tracking-wide text-slate-300">
+              Select Date
+            </label>
+            <select
+              id="dateSelect"
+              class="mt-2 w-full rounded-lg border border-white/10 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300 lg:w-56"
+            ></select>
+          </div>
+        </div>
+      </div>
+
+      <section class="grid gap-4 bg-slate-50 p-5 sm:p-6 md:grid-cols-3" aria-label="Summary cards">
+        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium text-slate-500">Total Energy Today</p>
+              <p class="mt-3 text-4xl font-bold text-slate-950">
+                <span id="totalEnergy">0.0</span>
+                <span class="text-base font-semibold text-slate-500">kWh</span>
+              </p>
+            </div>
+            <div class="rounded-lg bg-blue-100 px-3 py-2 text-sm font-bold text-blue-700">kWh</div>
+          </div>
+        </article>
+
+        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium text-slate-500">Active Alerts</p>
+              <p id="activeAlerts" class="mt-3 text-4xl font-bold text-red-600">0</p>
+            </div>
+            <div class="rounded-lg bg-red-100 px-3 py-2 text-sm font-bold text-red-700">Alert</div>
+          </div>
+        </article>
+
+        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium text-slate-500">Peak Usage</p>
+              <p class="mt-3 text-4xl font-bold text-slate-950">
+                <span id="peakUsage">0.0</span>
+                <span class="text-base font-semibold text-slate-500">kWh</span>
+              </p>
+            </div>
+            <div class="rounded-lg bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">Peak</div>
+          </div>
+        </article>
+      </section>
     </header>
 
-    <section class="grid gap-4 md:grid-cols-2" aria-label="Summary cards">
-      <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm font-medium text-slate-500">Total Energy Today (kWh)</p>
-        <p id="totalEnergy" class="mt-3 text-4xl font-bold text-slate-950">0.0</p>
-      </article>
-
-      <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm font-medium text-slate-500">Active Alerts</p>
-        <p id="activeAlerts" class="mt-3 text-4xl font-bold text-red-600">0</p>
-      </article>
-    </section>
-
-    <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm" aria-label="Energy trend chart">
-      <div class="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+    <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-xl" aria-label="Energy trend chart">
+      <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 class="text-xl font-semibold text-slate-950">Energy Trend</h2>
-          <p class="text-sm text-slate-500">Mock usage data from the last 24 hours.</p>
+          <p id="chartSubtitle" class="text-sm text-slate-500">24-hour mock usage data.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs font-semibold">
+          <span class="rounded-full bg-green-100 px-3 py-1 text-green-700">Normal</span>
+          <span class="rounded-full bg-yellow-100 px-3 py-1 text-yellow-800">Warning</span>
+          <span class="rounded-full bg-red-100 px-3 py-1 text-red-700">Critical</span>
         </div>
       </div>
       <div class="h-80">
@@ -41,15 +88,17 @@
       </div>
     </section>
 
-    <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm" aria-label="Zone status table">
-      <div class="mb-4">
-        <h2 class="text-xl font-semibold text-slate-950">Zone Status</h2>
-        <p class="text-sm text-slate-500">Current energy usage and alert level by factory zone.</p>
+    <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-xl" aria-label="Zone status table">
+      <div class="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-slate-950">Zone Status</h2>
+          <p id="tableSubtitle" class="text-sm text-slate-500">Current energy usage and alert level by factory zone.</p>
+        </div>
       </div>
 
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto rounded-lg border border-slate-200">
         <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-          <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+          <thead class="bg-slate-100 text-xs uppercase text-slate-500">
             <tr>
               <th scope="col" class="px-4 py-3 font-semibold">Zone</th>
               <th scope="col" class="px-4 py-3 font-semibold">Latest Time</th>
@@ -64,41 +113,125 @@
   </main>
 
   <script>
-    const energyData = [
-      { timestamp: '00:00', zone: 'Production Line A', kwh_usage: 42.8, status: 'Normal' },
-      { timestamp: '01:00', zone: 'Production Line A', kwh_usage: 39.6, status: 'Normal' },
-      { timestamp: '02:00', zone: 'Storage Area', kwh_usage: 25.4, status: 'Normal' },
-      { timestamp: '03:00', zone: 'Office', kwh_usage: 18.9, status: 'Normal' },
-      { timestamp: '04:00', zone: 'Restrooms', kwh_usage: 12.2, status: 'Normal' },
-      { timestamp: '05:00', zone: 'Production Line B', kwh_usage: 55.1, status: 'Normal' },
-      { timestamp: '06:00', zone: 'Production Line A', kwh_usage: 72.4, status: 'Warning' },
-      { timestamp: '07:00', zone: 'Production Line B', kwh_usage: 88.7, status: 'Warning' },
-      { timestamp: '08:00', zone: 'Production Line A', kwh_usage: 120.0, status: 'Critical' },
-      { timestamp: '09:00', zone: 'Production Line B', kwh_usage: 95.3, status: 'Warning' },
-      { timestamp: '10:00', zone: 'Storage Area', kwh_usage: 48.5, status: 'Normal' },
-      { timestamp: '11:00', zone: 'Office', kwh_usage: 36.8, status: 'Normal' },
-      { timestamp: '12:00', zone: 'Restrooms', kwh_usage: 21.1, status: 'Normal' },
-      { timestamp: '13:00', zone: 'Production Line A', kwh_usage: 110.5, status: 'Critical' },
-      { timestamp: '14:00', zone: 'Production Line B', kwh_usage: 82.6, status: 'Warning' },
-      { timestamp: '15:00', zone: 'Storage Area', kwh_usage: 52.7, status: 'Normal' },
-      { timestamp: '16:00', zone: 'Office', kwh_usage: 40.2, status: 'Normal' },
-      { timestamp: '17:00', zone: 'Production Line A', kwh_usage: 98.4, status: 'Warning' },
-      { timestamp: '18:00', zone: 'Production Line B', kwh_usage: 76.2, status: 'Normal' },
-      { timestamp: '19:00', zone: 'Storage Area', kwh_usage: 47.9, status: 'Normal' },
-      { timestamp: '20:00', zone: 'Office', kwh_usage: 29.4, status: 'Normal' },
-      { timestamp: '21:00', zone: 'Restrooms', kwh_usage: 16.8, status: 'Normal' },
-      { timestamp: '22:00', zone: 'Production Line A', kwh_usage: 65.9, status: 'Normal' },
-      { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 58.3, status: 'Normal' }
-    ];
+    const mockDataByDate = {
+      '2026-06-09': {
+        label: 'June 9, 2026',
+        energyData: [
+          { timestamp: '00:00', zone: 'Production Line A', kwh_usage: 35.4, status: 'Normal' },
+          { timestamp: '01:00', zone: 'Production Line A', kwh_usage: 32.6, status: 'Normal' },
+          { timestamp: '02:00', zone: 'Storage Area', kwh_usage: 22.3, status: 'Normal' },
+          { timestamp: '03:00', zone: 'Office', kwh_usage: 17.4, status: 'Normal' },
+          { timestamp: '04:00', zone: 'Restrooms', kwh_usage: 11.2, status: 'Normal' },
+          { timestamp: '05:00', zone: 'Production Line B', kwh_usage: 48.8, status: 'Normal' },
+          { timestamp: '06:00', zone: 'Production Line A', kwh_usage: 62.1, status: 'Normal' },
+          { timestamp: '07:00', zone: 'Production Line B', kwh_usage: 76.3, status: 'Normal' },
+          { timestamp: '08:00', zone: 'Production Line A', kwh_usage: 84.7, status: 'Warning' },
+          { timestamp: '09:00', zone: 'Production Line B', kwh_usage: 79.2, status: 'Normal' },
+          { timestamp: '10:00', zone: 'Storage Area', kwh_usage: 43.1, status: 'Normal' },
+          { timestamp: '11:00', zone: 'Office', kwh_usage: 34.2, status: 'Normal' },
+          { timestamp: '12:00', zone: 'Restrooms', kwh_usage: 19.5, status: 'Normal' },
+          { timestamp: '13:00', zone: 'Production Line A', kwh_usage: 88.1, status: 'Warning' },
+          { timestamp: '14:00', zone: 'Production Line B', kwh_usage: 73.6, status: 'Normal' },
+          { timestamp: '15:00', zone: 'Storage Area', kwh_usage: 45.9, status: 'Normal' },
+          { timestamp: '16:00', zone: 'Office', kwh_usage: 37.8, status: 'Normal' },
+          { timestamp: '17:00', zone: 'Production Line A', kwh_usage: 81.4, status: 'Warning' },
+          { timestamp: '18:00', zone: 'Production Line B', kwh_usage: 65.7, status: 'Normal' },
+          { timestamp: '19:00', zone: 'Storage Area', kwh_usage: 39.8, status: 'Normal' },
+          { timestamp: '20:00', zone: 'Office', kwh_usage: 27.1, status: 'Normal' },
+          { timestamp: '21:00', zone: 'Restrooms', kwh_usage: 15.3, status: 'Normal' },
+          { timestamp: '22:00', zone: 'Production Line A', kwh_usage: 53.2, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 49.8, status: 'Normal' }
+        ],
+        zoneStatus: [
+          { timestamp: '23:00', zone: 'Production Line A', kwh_usage: 53.2, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 49.8, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Storage Area', kwh_usage: 39.8, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Restrooms', kwh_usage: 15.3, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Office', kwh_usage: 27.1, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Compressor Room', kwh_usage: 70.5, status: 'Warning' }
+        ]
+      },
+      '2026-06-10': {
+        label: 'June 10, 2026',
+        energyData: [
+          { timestamp: '00:00', zone: 'Production Line A', kwh_usage: 42.8, status: 'Normal' },
+          { timestamp: '01:00', zone: 'Production Line A', kwh_usage: 39.6, status: 'Normal' },
+          { timestamp: '02:00', zone: 'Storage Area', kwh_usage: 25.4, status: 'Normal' },
+          { timestamp: '03:00', zone: 'Office', kwh_usage: 18.9, status: 'Normal' },
+          { timestamp: '04:00', zone: 'Restrooms', kwh_usage: 12.2, status: 'Normal' },
+          { timestamp: '05:00', zone: 'Production Line B', kwh_usage: 55.1, status: 'Normal' },
+          { timestamp: '06:00', zone: 'Production Line A', kwh_usage: 72.4, status: 'Warning' },
+          { timestamp: '07:00', zone: 'Production Line B', kwh_usage: 88.7, status: 'Warning' },
+          { timestamp: '08:00', zone: 'Production Line A', kwh_usage: 120.0, status: 'Critical' },
+          { timestamp: '09:00', zone: 'Production Line B', kwh_usage: 95.3, status: 'Warning' },
+          { timestamp: '10:00', zone: 'Storage Area', kwh_usage: 48.5, status: 'Normal' },
+          { timestamp: '11:00', zone: 'Office', kwh_usage: 36.8, status: 'Normal' },
+          { timestamp: '12:00', zone: 'Restrooms', kwh_usage: 21.1, status: 'Normal' },
+          { timestamp: '13:00', zone: 'Production Line A', kwh_usage: 110.5, status: 'Critical' },
+          { timestamp: '14:00', zone: 'Production Line B', kwh_usage: 82.6, status: 'Warning' },
+          { timestamp: '15:00', zone: 'Storage Area', kwh_usage: 52.7, status: 'Normal' },
+          { timestamp: '16:00', zone: 'Office', kwh_usage: 40.2, status: 'Normal' },
+          { timestamp: '17:00', zone: 'Production Line A', kwh_usage: 98.4, status: 'Warning' },
+          { timestamp: '18:00', zone: 'Production Line B', kwh_usage: 76.2, status: 'Normal' },
+          { timestamp: '19:00', zone: 'Storage Area', kwh_usage: 47.9, status: 'Normal' },
+          { timestamp: '20:00', zone: 'Office', kwh_usage: 29.4, status: 'Normal' },
+          { timestamp: '21:00', zone: 'Restrooms', kwh_usage: 16.8, status: 'Normal' },
+          { timestamp: '22:00', zone: 'Production Line A', kwh_usage: 65.9, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 58.3, status: 'Normal' }
+        ],
+        zoneStatus: [
+          { timestamp: '23:00', zone: 'Production Line A', kwh_usage: 65.9, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 58.3, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Storage Area', kwh_usage: 74.2, status: 'Warning' },
+          { timestamp: '23:00', zone: 'Restrooms', kwh_usage: 16.8, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Office', kwh_usage: 29.4, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Compressor Room', kwh_usage: 92.6, status: 'Critical' }
+        ]
+      },
+      '2026-06-11': {
+        label: 'June 11, 2026',
+        energyData: [
+          { timestamp: '00:00', zone: 'Production Line A', kwh_usage: 40.1, status: 'Normal' },
+          { timestamp: '01:00', zone: 'Production Line A', kwh_usage: 37.9, status: 'Normal' },
+          { timestamp: '02:00', zone: 'Storage Area', kwh_usage: 24.8, status: 'Normal' },
+          { timestamp: '03:00', zone: 'Office', kwh_usage: 18.3, status: 'Normal' },
+          { timestamp: '04:00', zone: 'Restrooms', kwh_usage: 12.6, status: 'Normal' },
+          { timestamp: '05:00', zone: 'Production Line B', kwh_usage: 52.8, status: 'Normal' },
+          { timestamp: '06:00', zone: 'Production Line A', kwh_usage: 68.6, status: 'Normal' },
+          { timestamp: '07:00', zone: 'Production Line B', kwh_usage: 86.4, status: 'Warning' },
+          { timestamp: '08:00', zone: 'Production Line A', kwh_usage: 102.7, status: 'Warning' },
+          { timestamp: '09:00', zone: 'Production Line B', kwh_usage: 108.9, status: 'Critical' },
+          { timestamp: '10:00', zone: 'Storage Area', kwh_usage: 56.5, status: 'Normal' },
+          { timestamp: '11:00', zone: 'Office', kwh_usage: 39.7, status: 'Normal' },
+          { timestamp: '12:00', zone: 'Restrooms', kwh_usage: 22.8, status: 'Normal' },
+          { timestamp: '13:00', zone: 'Production Line A', kwh_usage: 96.2, status: 'Warning' },
+          { timestamp: '14:00', zone: 'Production Line B', kwh_usage: 91.3, status: 'Warning' },
+          { timestamp: '15:00', zone: 'Storage Area', kwh_usage: 61.6, status: 'Warning' },
+          { timestamp: '16:00', zone: 'Office', kwh_usage: 42.5, status: 'Normal' },
+          { timestamp: '17:00', zone: 'Production Line A', kwh_usage: 87.5, status: 'Warning' },
+          { timestamp: '18:00', zone: 'Production Line B', kwh_usage: 79.1, status: 'Normal' },
+          { timestamp: '19:00', zone: 'Storage Area', kwh_usage: 50.4, status: 'Normal' },
+          { timestamp: '20:00', zone: 'Office', kwh_usage: 31.6, status: 'Normal' },
+          { timestamp: '21:00', zone: 'Restrooms', kwh_usage: 18.4, status: 'Normal' },
+          { timestamp: '22:00', zone: 'Production Line A', kwh_usage: 70.2, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 64.7, status: 'Normal' }
+        ],
+        zoneStatus: [
+          { timestamp: '23:00', zone: 'Production Line A', kwh_usage: 70.2, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 64.7, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Storage Area', kwh_usage: 85.4, status: 'Warning' },
+          { timestamp: '23:00', zone: 'Restrooms', kwh_usage: 18.4, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Office', kwh_usage: 31.6, status: 'Normal' },
+          { timestamp: '23:00', zone: 'Compressor Room', kwh_usage: 118.9, status: 'Critical' }
+        ]
+      }
+    };
 
-    const currentZoneStatus = [
-      { timestamp: '23:00', zone: 'Production Line A', kwh_usage: 65.9, status: 'Normal' },
-      { timestamp: '23:00', zone: 'Production Line B', kwh_usage: 58.3, status: 'Normal' },
-      { timestamp: '23:00', zone: 'Storage Area', kwh_usage: 74.2, status: 'Warning' },
-      { timestamp: '23:00', zone: 'Restrooms', kwh_usage: 16.8, status: 'Normal' },
-      { timestamp: '23:00', zone: 'Office', kwh_usage: 29.4, status: 'Normal' },
-      { timestamp: '23:00', zone: 'Compressor Room', kwh_usage: 92.6, status: 'Critical' }
-    ];
+    let energyChart;
+
+    function getSelectedData() {
+      return mockDataByDate[document.getElementById('dateSelect').value];
+    }
 
     function getStatusClasses(status) {
       if (status === 'Critical') {
@@ -112,20 +245,34 @@
       return 'bg-green-100 text-green-700 ring-green-600/20';
     }
 
-    function updateSummaryCards() {
-      const totalEnergy = energyData.reduce((sum, item) => sum + item.kwh_usage, 0);
-      const activeAlerts = currentZoneStatus.filter((item) => item.status !== 'Normal').length;
+    function populateDateOptions() {
+      const dateSelect = document.getElementById('dateSelect');
+
+      dateSelect.innerHTML = Object.entries(mockDataByDate).map(([date, data]) => `
+        <option value="${date}">${data.label}</option>
+      `).join('');
+
+      dateSelect.value = '2026-06-11';
+    }
+
+    function updateSummaryCards(data) {
+      const totalEnergy = data.energyData.reduce((sum, item) => sum + item.kwh_usage, 0);
+      const activeAlerts = data.zoneStatus.filter((item) => item.status !== 'Normal').length;
+      const peakUsage = Math.max(...data.energyData.map((item) => item.kwh_usage));
 
       document.getElementById('totalEnergy').textContent = totalEnergy.toFixed(1);
       document.getElementById('activeAlerts').textContent = activeAlerts;
+      document.getElementById('peakUsage').textContent = peakUsage.toFixed(1);
+      document.getElementById('chartSubtitle').textContent = `24-hour mock usage data for ${data.label}.`;
+      document.getElementById('tableSubtitle').textContent = `Current zone status for ${data.label}.`;
     }
 
-    function renderStatusTable() {
+    function renderStatusTable(data) {
       const tableBody = document.getElementById('statusTableBody');
 
-      tableBody.innerHTML = currentZoneStatus.map((item) => `
-        <tr class="hover:bg-slate-50">
-          <td class="whitespace-nowrap px-4 py-4 font-medium text-slate-950">${item.zone}</td>
+      tableBody.innerHTML = data.zoneStatus.map((item) => `
+        <tr class="transition hover:bg-slate-50">
+          <td class="whitespace-nowrap px-4 py-4 font-semibold text-slate-950">${item.zone}</td>
           <td class="whitespace-nowrap px-4 py-4 text-slate-600">${item.timestamp}</td>
           <td class="whitespace-nowrap px-4 py-4 text-slate-600">${item.kwh_usage.toFixed(1)}</td>
           <td class="whitespace-nowrap px-4 py-4">
@@ -137,21 +284,28 @@
       `).join('');
     }
 
-    function renderEnergyChart() {
+    function renderEnergyChart(data) {
       const chartCanvas = document.getElementById('energyChart');
 
-      new Chart(chartCanvas, {
+      if (energyChart) {
+        energyChart.destroy();
+      }
+
+      energyChart = new Chart(chartCanvas, {
         type: 'line',
         data: {
-          labels: energyData.map((item) => item.timestamp),
+          labels: data.energyData.map((item) => item.timestamp),
           datasets: [
             {
               label: 'kWh Usage',
-              data: energyData.map((item) => item.kwh_usage),
-              borderColor: '#2563eb',
-              backgroundColor: 'rgba(37, 99, 235, 0.12)',
+              data: data.energyData.map((item) => item.kwh_usage),
+              borderColor: '#0891b2',
+              backgroundColor: 'rgba(8, 145, 178, 0.14)',
               fill: true,
               tension: 0.35,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#0891b2',
+              pointBorderWidth: 2,
               pointRadius: 4,
               pointHoverRadius: 6
             }
@@ -160,9 +314,18 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
           plugins: {
             legend: {
-              display: true
+              labels: {
+                color: '#334155',
+                font: {
+                  weight: 'bold'
+                }
+              }
             },
             tooltip: {
               callbacks: {
@@ -173,12 +336,18 @@
           scales: {
             y: {
               beginAtZero: true,
+              grid: {
+                color: '#e2e8f0'
+              },
               title: {
                 display: true,
                 text: 'kWh'
               }
             },
             x: {
+              grid: {
+                display: false
+              },
               title: {
                 display: true,
                 text: 'Time'
@@ -189,9 +358,17 @@
       });
     }
 
-    updateSummaryCards();
-    renderStatusTable();
-    renderEnergyChart();
+    function renderDashboard() {
+      const selectedData = getSelectedData();
+
+      updateSummaryCards(selectedData);
+      renderStatusTable(selectedData);
+      renderEnergyChart(selectedData);
+    }
+
+    populateDateOptions();
+    document.getElementById('dateSelect').addEventListener('change', renderDashboard);
+    renderDashboard();
   </script>
 </body>
 </html>
